@@ -18,7 +18,16 @@ module Gemirro
     # @return [HTTP::Message]
     #
     def self.get(url)
-      response = client.get(url, follow_redirect: true)
+      # break url apart to check for user/password
+      uri = URI(url)
+      # set basic auth if user and password provided in url
+      if uri.user && uri.password
+        clean_url = uri.scheme + '://' + uri.host + uri.path
+        client.set_auth(clean_url, uri.user, uri.password)
+        response = client.get(clean_url, follow_redirect: true)
+      else
+        response = client.get(url, follow_redirect: true)
+      end
 
       unless HTTP::Status.successful?(response.status)
         fail HTTPClient::BadResponseError, response.reason

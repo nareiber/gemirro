@@ -20,6 +20,15 @@ module Gemirro
         .to raise_error HTTPClient::BadResponseError, 'Unauthorized'
     end
 
+    it 'should use username/password provided in url' do
+      uri = 'https://username:password@github.com/PierreRambaud'
+      hclient = HTTPClient.new
+      allow(Http).to receive(:client).and_return(hclient) 
+      expect(hclient).to receive(:set_auth)
+        .with('https://github.com/PierreRambaud', 'username', 'password')
+      response = Http.get(uri)
+    end
+
     it 'should execute get request' do
       uri = 'http://github.com/PierreRambaud'
       Struct.new('HTTPResponse', :status, :body)
