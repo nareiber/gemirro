@@ -117,7 +117,7 @@ module Gemirro
             "#{@prerelease_specs_index}.gz"].include?(path)
           res = build_zlib_file(file, src_name, dst_name, true)
           next unless res
-        else
+        elsif file.end_with?('.gz')
           source_content = download_from_source(file)
           next if source_content.nil?
           MirrorFile.new(dst_name).write(source_content)
